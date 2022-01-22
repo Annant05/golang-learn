@@ -2,88 +2,37 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets int = 50
 
 var conferenceName = "Go Conference"
 var remainingTickets uint = 50
-var bookings = []string{}
-
-// var bookings = [50]string{}
+var bookings = make([]map[string]string, 0)
 
 func main() {
-	// conferenceName := "Go Conference"
-	// const conferenceTickets int = 50
-	// var remainingTickets uint = 50
-	// // var bookings = [50]string{}
-	// var bookings []string
-
-	// fmt.Printf("conferenceTickets is %T, remremainingTickets is %T , conferenceName is %T\n", conferenceTickets, remainingTickets, conferenceName)
 
 	greetUser()
 
-	// fmt.Printf("Welcome to %v booking application\n", conferenceName)
-
-	// for remainingTickets > 0 && len(bookings) < 50 {
 	for {
 
 		firstName, lastName, email, userTickets := getUserInput()
 
 		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
-		// fmt.Println(&remainingTickets)
-
-		// userName = "Tom"
-
-		// isValidCity := city == "Singapore" || city == "London"
-		// isInValidCity := city != "Singapore" && city != "London"
-
 		if isValidName && isValidEmail && isValidTicketNumber {
 
 			bookTicket(userTickets, firstName, lastName, email)
 
-			// bookings[0] = firstName + " " + lastName
-
-			// fmt.Printf("The whole slice: %v\n", bookings)
-			// fmt.Printf("The first value: %v\n", bookings[0])
-			// fmt.Printf("slice type: %T\n", bookings)
-			// fmt.Printf("slice size: %v\n", len(bookings))
-
 			firstNames := getFirstNames()
 			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
-			// var noTickerRemaining bool = remainingTickets == 0
-			// noTicketsRemaining := remainingTickets == 0
 			if remainingTickets == 0 {
 				//	end program
 				fmt.Println("Our conference is booked out. Come back next year.")
 				break
 			}
-
-			remainingTickets = remainingTickets - userTickets
-			// bookings[0] = firstName + " " + lastName
-			bookings = append(bookings, firstName+" "+lastName)
-
-			// fmt.Printf("The whole slice: %v\n", bookings)
-			// fmt.Printf("The first value: %v\n", bookings[0])
-			// fmt.Printf("slice type: %T\n", bookings)
-			// fmt.Printf("slice size: %v\n", len(bookings))
-
-			fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation on email at %v\n", firstName, lastName, userTickets, email)
-
-			fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
-
-			// var noTickerRemaining bool = remainingTickets == 0
-			// noTicketsRemaining := remainingTickets == 0
-			if remainingTickets == 0 {
-				//	end program
-				fmt.Println("Our conference is booked out. Come back next year.")
-				break
-			}
-			// }else if userTickets == remainingTickets {
-			//do something else
 
 		} else {
 			if !isValidName {
@@ -96,22 +45,9 @@ func main() {
 				fmt.Println("Number of tickets you entered is invalid")
 			}
 
-			// fmt.Println("Your input data is invalid.")
-			// break
 		}
 	}
 
-	// city := "London"
-	// switch city {
-	// case "New York":
-	// 	//
-
-	// case "Singapore", "Berlin":
-	// case "London", "Berlin":
-	// 	//
-	// default:
-	// 	fmt.Println("No valid value selected.")
-	// }
 }
 
 func greetUser() {
@@ -125,8 +61,7 @@ func getFirstNames() []string {
 
 	firstNames := []string{}
 	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	return firstNames
 
@@ -157,7 +92,19 @@ func getUserInput() (string, string, string, uint) {
 
 func bookTicket(userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
-	bookings = append(bookings, firstName+" "+lastName)
+	//create a map for a user
+	//map[string] represent data type of key
+	//map[]string represent data type of value
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+
+	// convert uint to string, 10 represents the base of 10
+	userData["noOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
+
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation on email at %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 
